@@ -10,6 +10,8 @@
 #define SHR_SIZE 2 /*sizeof(unsigned short)*/
 #define FLT_SIZE 4 /*sizeof(float)*/
 #define PTR_SIZE sizeof(void*)
+#define FILENAMES_BUFFER_SIZE 65535
+#define FILENAME_SIZE 256
 
 void mkdirtofile(char* path) {
 	size_t length = strlen(path);
@@ -67,7 +69,13 @@ void main(int argc, char **argv) {
 	fwrite(sec, INT_SIZE, 1, wrlFile);
 
 	bool outOfOrder = true;
-	char fileNames[1024][256];
+
+	char ** fileNames = (char **) malloc(FILENAMES_BUFFER_SIZE * sizeof(char*));
+
+	for (int i = 0; i < FILENAMES_BUFFER_SIZE; i++) {
+		fileNames[i] = (char *) malloc(FILENAME_SIZE);
+	}
+
 	eofdetect = fgetc(mapFile);
 	unsigned char* buffer;
 	while (!feof(mapFile) && !ferror(mapFile)) {
@@ -318,12 +326,12 @@ void main(int argc, char **argv) {
 		}
 		//.sd
 		else if (0x18 == sec[0]) {
-			sprintf_s(fileNames[1023], 255, "%s", argv[2]);
-			*(fileNames[1023]+strlen(fileNames[1023])-3) = 's';
-			*(fileNames[1023]+strlen(fileNames[1023])-2) = 'd';
-			*(fileNames[1023]+strlen(fileNames[1023])-1) = 0;
+			sprintf_s(fileNames[FILENAMES_BUFFER_SIZE-1], 255, "%s", argv[2]);
+			*(fileNames[FILENAMES_BUFFER_SIZE-1]+strlen(fileNames[FILENAMES_BUFFER_SIZE-1])-3) = 's';
+			*(fileNames[FILENAMES_BUFFER_SIZE-1]+strlen(fileNames[FILENAMES_BUFFER_SIZE-1])-2) = 'd';
+			*(fileNames[FILENAMES_BUFFER_SIZE-1]+strlen(fileNames[FILENAMES_BUFFER_SIZE-1])-1) = 0;
 
-			writeBuffer(buffer, CHR_SIZE, sec[1], fileNames[1023], "wb");
+			writeBuffer(buffer, CHR_SIZE, sec[1], fileNames[FILENAMES_BUFFER_SIZE-1], "wb");
 		}
 
 		//Data chunks. Output by other sections.
@@ -340,6 +348,12 @@ void main(int argc, char **argv) {
 
 		eofdetect = fgetc(mapFile);
 	}
+
+
+	for (int i = 0; i < FILENAMES_BUFFER_SIZE; i++) {
+		free(fileNames[i]);
+	}
+
 
 	//close the world. open the nExt.
 	fflush(wrlFile);
