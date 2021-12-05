@@ -70,7 +70,7 @@ void main(int argc, char **argv) {
 
 	bool outOfOrder = true;
 
-	char ** fileNames = (char **) malloc(FILENAMES_BUFFER_SIZE * sizeof(char*));
+	char ** fileNames = (char **) malloc(FILENAMES_BUFFER_SIZE * sizeof(PTR_SIZE));
 
 	for (int i = 0; i < FILENAMES_BUFFER_SIZE; i++) {
 		fileNames[i] = (char *) malloc(FILENAME_SIZE);
@@ -106,7 +106,7 @@ void main(int argc, char **argv) {
 			if (fwrite(sizes,  INT_SIZE, 2, wrlFile) != 2) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 			if (fwrite(buffer, INT_SIZE, 1, wrlFile) != 1) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 
-			int ints[14];
+			int ints[56];
 			float* floats = (float*)ints;
 			for (int i = 0; i < 14*INT_SIZE; i++) ints[i] = 0;
 
