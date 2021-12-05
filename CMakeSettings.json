@@ -3,20 +3,13 @@
     {
       "name": "x64-Debug",
       "generator": "Visual Studio 17 2022",
-      "inheritEnvironments": [ "msvc_x86" ],
+      "inheritEnvironments": [ "msvc_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-T v142",
+      "cmakeCommandArgs": "-T v141",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "variables": [
-        {
-          "name": "CMAKE_BUILD_TYPE",
-          "value": "Release",
-          "type": "STRING"
-        }
-      ],
-      "configurationType": "RelWithDebInfo"
+      "configurationType": "Debug"
     }
   ]
 }
