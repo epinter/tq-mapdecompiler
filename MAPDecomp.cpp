@@ -16,7 +16,7 @@
 void mkdirtofile(char* path) {
 	size_t length = strlen(path);
 	char* token;
-	char* nextToken;
+	char* nextToken = {};
 	//strtok replaces the delimiter with \0
 	token = strtok_s(path, "\\/", &nextToken);
 	while (strlen(path) != length) {
@@ -84,12 +84,13 @@ void main(int argc, char **argv) {
 		printf("0x%.8X (%010i) - 0x%.8X (%010i): Section %.2X\n", ftell(mapFile), ftell(mapFile), sec[1], sec[1], sec[0]);
 
 
+		buffer = (unsigned char*)malloc(CHR_SIZE * sec[1]);
+
 		//Data chunks. Parsed and output by other sections.
 		if (0x02 == sec[0] || 0x1A == sec[0]) {
 			if (fseek(mapFile, sec[1], SEEK_CUR) != 0) { ERROR("Failure reading \"%s\".\n", argv[1]); }
 		}
 		else {
-			buffer = (unsigned char*) malloc(CHR_SIZE*sec[1]);
 			if (NULL == buffer) { ERROR("%s\n", "Out of memory."); }
 			if (fread(buffer, CHR_SIZE, sec[1], mapFile) != sec[1]) { ERROR("Failure reading \"%s\".\n", argv[1]); }
 		}
@@ -106,7 +107,7 @@ void main(int argc, char **argv) {
 			if (fwrite(sizes,  INT_SIZE, 2, wrlFile) != 2) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 			if (fwrite(buffer, INT_SIZE, 1, wrlFile) != 1) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 
-			int ints[56];
+			int ints[56] = {};
 			float* floats = (float*)ints;
 			for (int i = 0; i < 14*INT_SIZE; i++) ints[i] = 0;
 
@@ -130,11 +131,11 @@ void main(int argc, char **argv) {
 				printf("0x%.8X (%010i) - 0x%.8X (%010i): %s\n", sizes[2], sizes[2], sizes[3], sizes[3], fileNames[i]);
 
 				//write the world
-				if (fwrite(sizes+1,      INT_SIZE, 1,        wrlFile) != 1)        { ERROR("Failure writing \"%s\".\n", argv[2]); }
-				if (fwrite(fileNames[i], CHR_SIZE, sizes[1], wrlFile) != sizes[1]) { ERROR("Failure writing \"%s\".\n", argv[2]); }
-				if (fwrite(ints,         FLT_SIZE, 13,       wrlFile) != 13)       { ERROR("Failure writing \"%s\".\n", argv[2]); }
-				if (fwrite(sizes+0,      INT_SIZE, 1,        wrlFile) != 1)        { ERROR("Failure writing \"%s\".\n", argv[2]); }
-				if (fwrite(dbr,          CHR_SIZE, sizes[0], wrlFile) != sizes[0]) { ERROR("Failure writing \"%s\".\n", argv[2]); }
+				if (fwrite(sizes+1,      INT_SIZE, 1,        wrlFile) != (size_t)1)        { ERROR("Failure writing \"%s\".\n", argv[2]); }
+				if (fwrite(fileNames[i], CHR_SIZE, sizes[1], wrlFile) != (size_t)sizes[1]) { ERROR("Failure writing \"%s\".\n", argv[2]); }
+				if (fwrite(ints,         FLT_SIZE, 13,       wrlFile) != (size_t)13)       { ERROR("Failure writing \"%s\".\n", argv[2]); }
+				if (fwrite(sizes+0,      INT_SIZE, 1,        wrlFile) != (size_t)1)        { ERROR("Failure writing \"%s\".\n", argv[2]); }
+				if (fwrite(dbr,          CHR_SIZE, sizes[0], wrlFile) != (size_t)sizes[0]) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 				fflush(wrlFile);
 
 				mkdirtofile(fileNames[i]);
@@ -146,7 +147,7 @@ void main(int argc, char **argv) {
 				unsigned char* lvl = (unsigned char*) malloc(CHR_SIZE*sizes[3]);
 				if (NULL == lvl) { ERROR("%s\n", "Out of memory."); }
 				if (fseek(mapFile, sizes[2], SEEK_SET) != 0) { ERROR("Failure reading \"%s\".\n", argv[1]); }
-				if (fread(lvl, CHR_SIZE, sizes[3], mapFile) != sizes[3]) { ERROR("Failure reading \"%s\".\n", argv[1]); }
+				if (fread(lvl, CHR_SIZE, sizes[3], mapFile) != (size_t)sizes[3]) { ERROR("Failure reading \"%s\".\n", argv[1]); }
 				//write the rlv data
 				writeBuffer(lvl, CHR_SIZE, sizes[3], fileNames[i], "wb");
 
@@ -177,7 +178,6 @@ void main(int argc, char **argv) {
 						int block1Size = x*y*FLT_SIZE;
 						lvlIndex += block1Size;
 
-						unsigned char* block2 = lvl+lvlIndex;
 						int block2Size = x*y*dbrWord;
 						lvlIndex += block2Size;
 
@@ -273,7 +273,7 @@ void main(int argc, char **argv) {
 				tga[i] = (unsigned char*) malloc(length);
 				if (NULL == tga[i]) { ERROR("%s\n", "Out of memory."); }
 				if (fseek(mapFile, offset, SEEK_SET) != 0) { ERROR("Failure reading \"%s\".\n", argv[1]); }
-				if (fread(tga[i], CHR_SIZE, length, mapFile) != length) { ERROR("Failure reading \"%s\".\n", argv[1]); }
+				if (fread(tga[i], CHR_SIZE, length, mapFile) != (size_t)length) { ERROR("Failure reading \"%s\".\n", argv[1]); }
 
 				//write the data
 				writeBuffer(tga[i], CHR_SIZE, length, fileNames[i], "wb");
@@ -315,7 +315,7 @@ void main(int argc, char **argv) {
 				ints[2] = tgaHeader[7];
 				ints[3] = tgaSize[i];
 				if (fwrite(ints, INT_SIZE, 4, wrlFile) != 4) { ERROR("Failure writing \"%s\".\n", argv[2]); }
-				if (fwrite(tga[i], CHR_SIZE, tgaSize[i], wrlFile) != tgaSize[i]) { ERROR("Failure writing \"%s\".\n", argv[2]); }
+				if (fwrite(tga[i], CHR_SIZE, tgaSize[i], wrlFile) != (size_t)tgaSize[i]) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 
 				free(tga[i]);
 			}
@@ -344,7 +344,7 @@ void main(int argc, char **argv) {
 			}
 		}
 */
-		if (0x02 != sec[0] && 0x1A != sec[0]) free(buffer);
+		free(buffer);
 
 		eofdetect = fgetc(mapFile);
 	}
