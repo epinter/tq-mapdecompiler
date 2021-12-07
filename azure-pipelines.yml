@@ -31,7 +31,7 @@ schedules:
    include:
      - azure-pipelines
   always: true
-- cron: '02 19 * * *'
+- cron: '10 19 * * *'
   displayName: nightly
   branches:
    include:
