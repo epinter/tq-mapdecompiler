@@ -25,13 +25,13 @@ steps:
 - publish: $(System.DefaultWorkingDirectory)/build/Debug/mapdecompiler.exe
   artifact: mapdecompiler.exe
 schedules:
-- cron: "0 0 * * *"
+- cron: "0 3 * * *"
   displayName: nightly
   branches:
    include:
      - azure-pipelines
   always: true
-- cron: '10 19 * * *'
+- cron: '13 22 * * *'
   displayName: nightly
   branches:
    include:
