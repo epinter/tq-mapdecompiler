@@ -30,8 +30,6 @@ schedules:
   branches:
    include:
      - azure-pipelines
-  
-schedules:
 - cron: '59 18 * * *'
   displayName: nightly
   branches:
