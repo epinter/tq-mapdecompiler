@@ -24,4 +24,16 @@ steps:
   displayName: 'Run a multi-line script'
 - publish: $(System.DefaultWorkingDirectory)/build/Debug/mapdecompiler.exe
   artifact: mapdecompiler.exe
-
+schedules:
+- cron: '0 0 * * *'
+  displayName: nightly
+  branches:
+   include:
+     - azure-pipelines
+  
+schedules:
+- cron: '59 18 * * *'
+  displayName: nightly
+  branches:
+   include:
+     - azure-pipelines
