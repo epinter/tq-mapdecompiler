@@ -107,9 +107,8 @@ void main(int argc, char **argv) {
 			if (fwrite(sizes,  INT_SIZE, 2, wrlFile) != 2) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 			if (fwrite(buffer, INT_SIZE, 1, wrlFile) != 1) { ERROR("Failure writing \"%s\".\n", argv[2]); }
 
-			int ints[56] = {};
+			int ints[56]{ };
 			float* floats = (float*)ints;
-			for (int i = 0; i < 14*INT_SIZE; i++) ints[i] = 0;
 
 			int index = INT_SIZE;
 			char dbr[256];
